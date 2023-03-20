@@ -1,7 +1,7 @@
-package bosh.resthooks;
+package bosh.resthooks.model;
 
+public class Subscription {
 
-public class Hook {
 
     private Integer id;
 
@@ -15,15 +15,18 @@ public class Hook {
 
     private String topicDescription;
 
-    public Hook(){}
+    private boolean status;
 
-    public Hook(Integer id,  String url, String topicId, String hookUri, String topicName, String topicDescription) {
-        this.setId(id);
-        this.setUrl(url);
-        this.setTopicId(topicId);
-        this.setHookUri(hookUri);
-        this.setTopicName(topicName);
-        this.setTopicDescription(topicDescription);
+    public Subscription() {}
+
+    public Subscription(Integer id, String url, String topicId, String hookUri, String topicName, String topicDescription, boolean status) {
+        this.id = id;
+        this.url = url;
+        this.topicId = topicId;
+        this.hookUri = hookUri;
+        this.topicName = topicName;
+        this.topicDescription = topicDescription;
+        this.status = status;
     }
 
     public Integer getId() {
@@ -74,40 +77,53 @@ public class Hook {
         this.topicDescription = topicDescription;
     }
 
-    private static Hook builder;
+    public boolean isStatus() {
+        return status;
+    }
 
-    public static Hook builder() {
-        builder = new Hook();
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    private static Subscription builder;
+
+    public static Subscription builder() {
+        builder = new Subscription();
         return builder;
     }
 
-    public Hook id(Integer id) {
+    public Subscription id(Integer id) {
         this.builder.setId(id);
         return this.builder;
     }
 
-    public Hook url(String url) {
+    public Subscription url(String url) {
         this.builder.setUrl(url);
         return this.builder;
     }
 
-    public Hook topicId(String topicId) {
+    public Subscription topicId(String topicId) {
         this.builder.setTopicName(topicId);
         return this.builder;
     }
 
-    public Hook hookUri(String hookUri) {
+    public Subscription hookUri(String hookUri) {
         this.builder.setHookUri(hookUri);
         return this.builder;
     }
 
-    public Hook topicName(String topicName) {
+    public Subscription topicName(String topicName) {
         this.builder.setTopicName(topicName);
         return this.builder;
     }
 
-    public Hook topicDescription(String topicDescription) {
+    public Subscription topicDescription(String topicDescription) {
         this.builder.setTopicDescription(topicDescription);
+        return this.builder;
+    }
+
+    public Subscription status(boolean status) {
+        this.builder.status = status;
         return this.builder;
     }
 }
