@@ -15,7 +15,10 @@
 	<description>CRUD service for the management of REST Hooks</description>
 	<properties>
 		<java.version>19</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>11</maven.compiler.release>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
