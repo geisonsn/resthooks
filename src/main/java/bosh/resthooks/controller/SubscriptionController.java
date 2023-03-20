@@ -2,6 +2,7 @@ package bosh.resthooks.controller;
 
 import bosh.resthooks.model.Subscription;
 import bosh.resthooks.service.SubscriptionService;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

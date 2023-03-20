@@ -19,7 +19,7 @@ public class SubscriptionRepository {
     );
 
     public Flux<Subscription> findAll() {
-        return subscriptions;
+        return subscriptions.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "No subscriptions found")));
     }
 
     public Mono<Subscription> find(Integer id) {
@@ -34,7 +34,7 @@ public class SubscriptionRepository {
         h.setId(id);
         h.setStatus(true);
         Mono<Subscription> newSub = Mono.just(h);
-        subscriptions = Flux.concat(subscriptions, newSub);
+        subscriptions = Flux.concat(newSub, subscriptions);
         return newSub;
     }
 
