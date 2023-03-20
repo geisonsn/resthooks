@@ -17,7 +17,6 @@ public class SubscriptionController {
 
     private SubscriptionService service;
 
-    @Autowired
     private SubscriptionController(SubscriptionService service) {
         this.service = service;
     }

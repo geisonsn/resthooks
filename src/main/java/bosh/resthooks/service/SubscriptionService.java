@@ -12,7 +12,6 @@ public class SubscriptionService {
 
     private SubscriptionRepository repository;
 
-    @Autowired
     public SubscriptionService(SubscriptionRepository repository) {
         this.repository = repository;
     }
