@@ -8,14 +8,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class SubscriptionRepository {
+public class
+SubscriptionRepository {
 
     private static Integer lastItem = 3;
 
     private static Flux<Subscription> subscriptions = Flux.just(
-        new Subscription(1, "subscriptions", "abc123", "http://localhost:8080/subscriptions", "hook.create", "Topic to create hooks", false),
-        new Subscription(2, "subscriptions/2", "def456", "http://localhost:8080/subscriptions/2", "hook.update", "Topic to update hooks", false),
-        new Subscription(3, "subscriptions/3", "ghi789", "http://localhost:8080/subscriptions/3", "hook.delete", "Topic to delete hooks", false)
+        new Subscription(1, "subscriptions/1", "abc123", "http://localhost:8080/subscriptions/1", "hook.create", "Topic to create hooks", true),
+        new Subscription(2, "subscriptions/2", "def456", "http://localhost:8080/subscriptions/2", "hook.update", "Topic to update hooks", true),
+        new Subscription(3, "subscriptions/3", "ghi789", "http://localhost:8080/subscriptions/3", "hook.delete", "Topic to delete hooks", true)
     );
 
     public Flux<Subscription> findAll() {
@@ -52,10 +53,15 @@ public class SubscriptionRepository {
         return mono;
     }
 
-    public void remove(Integer id) {
-        Flux<Subscription> flux = subscriptions.filter(ho -> ho.getId().intValue() != id.intValue())
-            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Subscription %d not found", id))));
+    public Mono<Subscription> remove(Integer id) {
+
+        Mono<Subscription> subscriptionMono = find(id);
+
+        Flux<Subscription> flux = subscriptions.filter(ho -> ho.getId().intValue() != id.intValue());
+
         subscriptions = flux;
+        return subscriptionMono;
+
     }
 
     private Integer getNextId() {

@@ -45,8 +45,10 @@ public class SubscriptionController {
     }
 
     @DeleteMapping("{idSubscription}")
-    public void delete(@PathVariable("idSubscription")  Integer id) {
-         service.delete(id);
+    public Mono<ResponseEntity<Void>> delete(@PathVariable("idSubscription")  Integer id) {
+        return service.delete(id)
+            .map(s -> ResponseEntity.ok().<Void>build())
+            .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @ExceptionHandler(ResponseStatusException.class)

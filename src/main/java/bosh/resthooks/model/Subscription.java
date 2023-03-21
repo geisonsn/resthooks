@@ -1,7 +1,8 @@
 package bosh.resthooks.model;
 
-public class Subscription {
+import java.util.Objects;
 
+public class Subscription {
 
     private Integer id;
 
@@ -85,6 +86,29 @@ public class Subscription {
         this.status = status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subscription that = (Subscription) o;
+        return status == that.status && id.equals(that.id) && url.equals(that.url) && topicId.equals(that.topicId) && hookUri.equals(that.hookUri) && topicName.equals(that.topicName) && topicDescription.equals(that.topicDescription);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Subscription{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", hookUri='" + hookUri + '\'' +
+                ", status=" + status +
+                '}';
+    }
+
     private static Subscription builder;
 
     public static Subscription builder() {
@@ -103,7 +127,7 @@ public class Subscription {
     }
 
     public Subscription topicId(String topicId) {
-        this.builder.setTopicName(topicId);
+        this.builder.setTopicId(topicId);
         return this.builder;
     }
 

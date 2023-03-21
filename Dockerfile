@@ -3,7 +3,7 @@ FROM maven:3.9.0 AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
 WORKDIR /home/app
-RUN mvn -f ./pom.xml -DskipTests clean package
+RUN mvn -f ./pom.xml clean package
 
 # Package stage
 FROM openjdk:19-jdk-alpine

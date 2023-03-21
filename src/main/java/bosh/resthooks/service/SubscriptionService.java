@@ -2,7 +2,6 @@ package bosh.resthooks.service;
 
 import bosh.resthooks.model.Subscription;
 import bosh.resthooks.repository.SubscriptionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -32,7 +31,7 @@ public class SubscriptionService {
         return repository.update(id, s);
     }
 
-    public void delete(Integer id) {
-        repository.remove(id);
+    public Mono<Subscription> delete(Integer id) {
+        return repository.remove(id);
     }
 }

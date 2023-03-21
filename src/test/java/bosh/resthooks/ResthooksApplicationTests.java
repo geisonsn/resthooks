@@ -1,123 +1,113 @@
 package bosh.resthooks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import bosh.resthooks.model.Subscription;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest
-@AutoConfigureMockMvc
-class ResthooksApplicationTests {
+@AutoConfigureWebTestClient
+public class ResthooksApplicationTests {
 
 	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ObjectMapper mapper;
+	private WebTestClient client;
 
 	@Test
-	 void getAllHooks_success() throws Exception {
-		this.mockMvc
-			.perform(MockMvcRequestBuilders
-				.get("/subscriptions2")
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk());
+	void getAllSubscriptions() throws Exception{
+		this.client.get()
+			.uri("/subscriptions")
+			.exchange()
+			.expectStatus()
+			.isOk();
 	}
 
-//	@Test
-//	void getHookById_success() throws Exception {
-//		this.mockMvc
-//			.perform(MockMvcRequestBuilders
-//				.get("/subscriptions/1")
-//				.contentType(MediaType.APPLICATION_JSON))
-//			.andExpect(status().isOk());
-//	}
-//
-//	@Test
-//	void getHookById_notfound() throws Exception {
-//		this.mockMvc
-//			.perform(MockMvcRequestBuilders
-//				.get("/subscriptions/10000")
-//				.contentType(MediaType.APPLICATION_JSON))
-//			.andExpect(status().isNotFound());
-//	}
-//
-//	@Test
-//	void createHook_success() throws Exception {
-//		Hook hook = Hook.builder()
-//			.url("subscriptions/new")
-//			.topicId("hkljkwewewe212121")
-//			.hookUri("http://localhost:8080/subscriptions/new")
-//			.topicName("hook.new")
-//			.topicDescription("New topic");
-//
-//		this.mockMvc
-//			.perform(MockMvcRequestBuilders
-//				.post("/subscriptions")
-//				.accept(MediaType.APPLICATION_JSON)
-//				.content(this.mapper.writeValueAsString(hook))
-//				.contentType(MediaType.APPLICATION_JSON))
-//			.andExpect(status().isCreated());
-//	}
-//
-//	@Test
-//	void updateHook_success() throws Exception {
-//		Hook hook = Hook.builder()
-//			.url("subscriptions/update")
-//			.topicId("hkljkwewewe212121")
-//			.hookUri("http://localhost:8080/subscriptions/update")
-//			.topicName("hook.updated")
-//			.topicDescription("Updated topic");
-//
-//		this.mockMvc
-//			.perform(MockMvcRequestBuilders
-//				.put("/subscriptions/1")
-//				.accept(MediaType.APPLICATION_JSON)
-//				.content(this.mapper.writeValueAsString(hook))
-//				.contentType(MediaType.APPLICATION_JSON))
-//			.andExpect(status().isOk());
-//	}
-//
-//	@Test
-//	void updateHook_notfound() throws Exception {
-//		Hook hook = Hook.builder()
-//			.url("subscriptions/update")
-//			.topicId("hkljkwewewe212121")
-//			.hookUri("http://localhost:8080/subscriptions/update")
-//			.topicName("hook.updated")
-//			.topicDescription("Updated topic");
-//
-//		this.mockMvc
-//			.perform(MockMvcRequestBuilders
-//				.put("/subscriptions/11")
-//				.accept(MediaType.APPLICATION_JSON)
-//				.content(this.mapper.writeValueAsString(hook))
-//				.contentType(MediaType.APPLICATION_JSON))
-//			.andExpect(status().isNotFound());
-//	}
-//
-//	@Test
-//	void deleteHook_success() throws Exception {
-//		this.mockMvc
-//			.perform(MockMvcRequestBuilders
-//				.delete("/subscriptions/2")
-//				.contentType(MediaType.APPLICATION_JSON))
-//			.andExpect(status().isOk());
-//	}
-//
-//	@Test
-//	void deleteHook_notfound() throws Exception {
-//		this.mockMvc
-//			.perform(MockMvcRequestBuilders
-//				.delete("/subscriptions/20")
-//				.contentType(MediaType.APPLICATION_JSON))
-//			.andExpect(status().isNotFound());
-//	}
+	@Test
+	void getSubscriptionById_success() throws Exception{
+		this.client.get()
+			.uri(String.format("/subscriptions/%d", 1))
+			.exchange()
+			.expectStatus()
+			.isOk();
+	}
+
+	@Test
+	void getSubscriptionById_notfound() throws Exception{
+		this.client.get()
+			.uri(String.format("/subscriptions/%d", 9))
+			.exchange()
+			.expectStatus()
+			.isNotFound();
+	}
+
+	@Test
+ 	void createSubscription_success() throws Exception {
+		Subscription sub = Subscription.builder()
+			.url("subscriptions")
+			.topicId("abc123")
+			.hookUri("http://localhost:8080/subscriptions")
+			.topicName("hook.create")
+			.topicDescription("Topic to create hooks");
+
+		this.client.post()
+			.uri("/subscriptions")
+			.bodyValue(sub)
+			.exchange()
+			.expectStatus()
+			.isCreated();
+	}
+
+	@Test
+	void updateSubscription_success() throws Exception {
+		Subscription sub = Subscription.builder()
+			.url("subscriptions")
+			.topicId("abc123")
+			.hookUri("http://localhost:8080/subscriptions")
+			.topicName("hook.create")
+			.topicDescription("Topic updated");
+
+		this.client.put()
+			.uri(String.format("/subscriptions/%d", 1))
+			.bodyValue(sub)
+			.exchange()
+			.expectStatus()
+			.isOk();
+	}
+
+	@Test
+	void updateSubscription_notfound() throws Exception {
+		Subscription sub = Subscription.builder()
+			.url("subscriptions")
+			.topicId("abc123")
+			.hookUri("http://localhost:8080/subscriptions")
+			.topicName("hook.create")
+			.topicDescription("Topic updated");
+
+		this.client.put()
+			.uri(String.format("/subscriptions/%d", 9))
+			.bodyValue(sub)
+			.exchange()
+			.expectStatus()
+			.isNotFound();
+	}
+
+	@Test
+	void deleteSubscription_success() throws Exception {
+		this.client.delete()
+			.uri(String.format("/subscriptions/%d", 3))
+			.exchange()
+			.expectStatus()
+			.isOk();
+	}
+
+	@Test
+	void deleteSubscription_notfound() throws Exception {
+		this.client.delete()
+			.uri(String.format("/subscriptions/%d", 9))
+			.exchange()
+			.expectStatus()
+			.isNotFound();
+	}
 
 }
