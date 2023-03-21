@@ -7,6 +7,8 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
+
 @Repository
 public class SubscriptionRepository {
 
@@ -18,26 +20,51 @@ public class SubscriptionRepository {
         new Subscription(3, "subscriptions/3", "ghi789", "http://localhost:8080/subscriptions/3", "hook.delete", "Topic to delete hooks", true)
     );
 
+    /**
+     * List all subscriptions
+     * @return a Flux
+     * @throws ResponseStatusException if no subscriptions found
+     */
     public Flux<Subscription> findAll() {
-        return subscriptions.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "No subscriptions found")));
+        return subscriptions
+            .sort(Comparator.comparing(Subscription::getId))
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "No subscriptions found")));
     }
 
+    /**
+     * Get a subscription by ID
+     * @param id
+     * @return a Mono
+     * @throws ResponseStatusException if no subscription being found
+     */
     public Mono<Subscription> find(Integer id) {
         Flux<Subscription> flux = subscriptions
-                .filter(s -> s.getId().intValue() == id.intValue())
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Subscription %d not found", id))));
+            .filter(s -> s.getId().intValue() == id.intValue())
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Subscription %d not found", id))));
         return flux.next();
     }
 
-    public Mono<Subscription> save(Subscription h) {
+    /**
+     * Save a subscription
+     * @param su a subscription to be saved
+     * @return a Mono
+     */
+    public Mono<Subscription> save(Subscription su) {
         var id = getNextId();
-        h.setId(id);
-        h.setStatus(true);
-        Mono<Subscription> newSub = Mono.just(h);
+        su.setId(id);
+        su.setStatus(true);
+        Mono<Subscription> newSub = Mono.just(su);
         subscriptions = Flux.concat(newSub, subscriptions);
         return newSub;
     }
 
+    /**
+     * Update a subscription by ID
+     * @param id
+     * @param su a Subscription instance
+     * @return a Mono
+     * @throws ResponseStatusException if no subscription being found
+     */
     public Mono<Subscription> update(Integer id, Subscription su) {
         Mono<Subscription> mono = find(id).map(s -> {
             if (s.getId().intValue() == id.intValue()) {
@@ -52,6 +79,12 @@ public class SubscriptionRepository {
         return mono;
     }
 
+    /**
+     * Remove a subscription by ID
+      * @param id
+     * @return a Mono
+     * @throws ResponseStatusException if no subscription being found
+     */
     public Mono<Subscription> remove(Integer id) {
 
         Mono<Subscription> subscriptionMono = find(id);

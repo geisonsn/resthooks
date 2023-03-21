@@ -27,8 +27,7 @@ public class SubscriptionController {
     @GetMapping("{idSubscription}")
     public Mono<ResponseEntity<Subscription>> get(@PathVariable("idSubscription")  Integer id) {
         return service.get(id)
-            .map(ResponseEntity::ok)
-            .defaultIfEmpty(ResponseEntity.notFound().build());
+            .map(ResponseEntity::ok);
     }
 
     @PostMapping
@@ -40,15 +39,13 @@ public class SubscriptionController {
     @PutMapping("{idSubscription}")
     public Mono<ResponseEntity<Subscription>> update(@PathVariable("idSubscription") Integer id, @RequestBody Subscription s) {
         return service.update(id, s)
-            .map(ResponseEntity::ok)
-            .defaultIfEmpty(ResponseEntity.notFound().build());
+            .map(ResponseEntity::ok);
     }
 
     @DeleteMapping("{idSubscription}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable("idSubscription")  Integer id) {
         return service.delete(id)
-            .map(s -> ResponseEntity.ok().<Void>build())
-            .defaultIfEmpty(ResponseEntity.notFound().build());
+            .map(s -> ResponseEntity.ok().<Void>build());
     }
 
     @ExceptionHandler(ResponseStatusException.class)
