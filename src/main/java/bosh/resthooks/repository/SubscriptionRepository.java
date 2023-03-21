@@ -8,8 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class
-SubscriptionRepository {
+public class SubscriptionRepository {
 
     private static Integer lastItem = 3;
 
